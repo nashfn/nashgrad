@@ -76,6 +76,7 @@ class Value:
 
         out._backward = _backward
         return out
+    
     def backward(self):
         visited = set()
         topo_order = []
@@ -89,6 +90,16 @@ class Value:
         build_topo(visited, self)
         for n in reversed(topo_order):
             n._backward()
+
+
+    def relu(self):
+        out = Value(0 if self.data < 0 else self.data, (self,), "ReLU")
+
+        def _backward():
+            self.grad = out.grad * (out.data > 0)
+            
+        out._backward = _backward
+        return out
 
     
     def __neg__(self):
